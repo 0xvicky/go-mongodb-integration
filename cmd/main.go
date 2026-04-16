@@ -8,15 +8,16 @@ import (
 	repository "go-mongo/internal/repository/user"
 	"go-mongo/internal/service"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	envErr := godotenv.Load()
-	if envErr != nil {
-		fmt.Println("[ERROR] error while loading env", envErr)
+
+	if os.Getenv("ENV") != "production" {
+		_ = godotenv.Load()
 	}
 
 	//load db
