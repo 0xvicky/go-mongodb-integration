@@ -38,3 +38,51 @@ func (m *UserRepository) GetUserById(c *gin.Context, userId bson.ObjectID) (any,
 
 	return user, nil
 }
+
+func (m *UserRepository) GetAllUsers(c *gin.Context) ([]any, error) {
+	var users []any
+	cursor, findErr := m.MongoCollection.Find(c, bson.M{})
+
+	if findErr != nil {
+		return nil, fmt.Errorf("error while fetching cursor:%w", findErr)
+	}
+
+	if err := cursor.All(c, &users); err != nil {
+		return nil, fmt.Errorf("error while fetching all users:%w", err)
+	}
+
+	return users, nil
+}
+
+func (m *UserRepository) UpdateUser(c *gin.Context, user model.User) (any, error) {
+	updates := bson.M{
+		"$set": bson.M{
+			"name": user.Name,
+		},
+	}
+	updateRes, findErr := m.MongoCollection.UpdateByID(c, user.UserId, updates)
+
+	if findErr != nil {
+		return nil, fmt.Errorf("error while fetching cursor:%w", findErr)
+	}
+	return updateRes, nil
+}
+func (m *UserRepository) DeleteUserById(c *gin.Context, userId bson.ObjectID) (any, error) {
+	filter := bson.M{"_id": userId}
+	delRes, delErr := m.MongoCollection.DeleteOne(c, filter)
+	if delErr != nil {
+		return nil, fmt.Errorf("delete user failed:%w", delErr)
+	}
+
+	return delRes, nil
+}
+func (m *UserRepository) DeleteAllUsers(c *gin.Context) (any, error) {
+	filter := bson.M{}
+
+	delAllRes, delAllErr := m.MongoCollection.DeleteMany(c, filter)
+	if delAllErr != nil {
+		return nil, fmt.Errorf("delete user failed:%w", delAllErr)
+	}
+
+	return delAllRes, nil
+}

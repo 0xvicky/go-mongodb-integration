@@ -72,3 +72,85 @@ func (h *UserController) GetUserById(c *gin.Context) {
 		"data":    user,
 	})
 }
+func (h *UserController) GetAllUsers(c *gin.Context) {
+
+	users, err := h.Service.GetAllUsers(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": "internal server error",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    users,
+	})
+}
+
+func (h *UserController) UpdateUser(c *gin.Context) {
+	var req model.User
+	userId := c.Param("id")
+	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": "internal server error",
+			"error":   err.Error(),
+		})
+	}
+	users, err := h.Service.UpdateUser(c, userId, req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": "internal server error",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    users,
+	})
+}
+
+func (h *UserController) DeleteById(c *gin.Context) {
+	userId := c.Param("id")
+
+	delRes, delErr := h.Service.DeleteById(c, userId)
+	if delErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": "internal server error",
+			"error":   delErr.Error(),
+		})
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    delRes,
+	})
+
+}
+
+func (h *UserController) DeleteAll(c *gin.Context) {
+
+	delRes, delErr := h.Service.DeleteAll(c)
+	if delErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": "internal server error",
+			"error":   delErr.Error(),
+		})
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    delRes,
+	})
+
+}

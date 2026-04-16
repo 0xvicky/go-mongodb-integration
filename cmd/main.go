@@ -46,6 +46,10 @@ func main() {
 	r.GET("/", h.Hello)
 	r.POST("/newuser", h.CreateUser)
 	r.GET("/user/:id", h.GetUserById)
+	r.GET("/users", h.GetAllUsers)
+	r.PATCH("/update/:id", h.UpdateUser)
+	r.DELETE("/delete/:id", h.DeleteById)
+	r.DELETE("/deleteall", h.DeleteAll)
 	r.Run()
 	//connect db
 
