@@ -54,3 +54,21 @@ func (h *UserController) CreateUser(c *gin.Context) {
 		"data":    savedUser,
 	})
 }
+
+func (h *UserController) GetUserById(c *gin.Context) {
+	userId := c.Param("id")
+
+	user, err := h.Service.GetUserById(c, userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": "internal server error",
+			"error":   err.Error(),
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    user,
+	})
+}

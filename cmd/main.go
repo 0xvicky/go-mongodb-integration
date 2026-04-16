@@ -45,6 +45,7 @@ func main() {
 
 	r.GET("/", h.Hello)
 	r.POST("/newuser", h.CreateUser)
+	r.GET("/user/:id", h.GetUserById)
 	r.Run()
 	//connect db
 

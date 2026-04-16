@@ -5,6 +5,7 @@ import (
 	"go-mongo/internal/model"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
@@ -25,4 +26,15 @@ func (m *UserRepository) CreateUser(c *gin.Context, newUser model.User) (any, er
 	}
 
 	return savedUser, nil
+}
+
+func (m *UserRepository) GetUserById(c *gin.Context, userId bson.ObjectID) (any, error) {
+	filter := bson.M{"_id": userId}
+	var user model.User
+	err := m.MongoCollection.FindOne(c, filter).Decode(&user)
+	if err != nil {
+		return nil, fmt.Errorf("user fetch err:%w", err)
+	}
+
+	return user, nil
 }
